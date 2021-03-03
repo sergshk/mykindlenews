@@ -1,0 +1,2 @@
+# mykindlenews
+Kindle News Generator
