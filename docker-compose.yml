@@ -1,0 +1,13 @@
+version: "3"
+services:
+  mykindlenews:
+    container_name: mykindlenews 
+    build: .
+    restart: always
+    environment:
+      - TZ=America/Chicago
+    volumes:
+      - ./server/:/server
+      - ./config/:/config
+      - ./src/:/src
+  
