@@ -3,7 +3,12 @@ import logging
 import os
 import subprocess
 import time
-import pypandoc 
+# pypandoc is the only part of real docker environment, we can skip for testing
+try:
+    import pypandoc
+except ImportError:
+    logging.info("Error initializing pypandoc and it's skipped")
+
 from parser import FeedparserThread
 from datetime import datetime, timedelta
 

@@ -6,6 +6,7 @@ import logging
 
 from configparser import ConfigParser
 from news import MyNews
+from webserver import ServerThread
 
 # Defining configuration file name and folder
 # pay attention to DEVENV variable that stands for development environment
@@ -33,6 +34,9 @@ else:
 newsConfig = ConfigParser()
 newsConfig.read(configFile)
 
+webServer = ServerThread(newsConfig = newsConfig) 
+# TODO implement graceful thread destruction upon keyboard interruption
+webServer.start()
 
 # launch service
 newsService = MyNews(newsConfig = newsConfig)
