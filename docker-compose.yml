@@ -6,8 +6,9 @@ services:
     restart: always
     environment:
       - TZ=America/Chicago
+#    network_mode: host
     ports:
-      - 8090:8090
+      - '8090:8090'
     volumes:
       - ./server/:/server
       - ./config/:/config
