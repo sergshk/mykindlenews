@@ -96,8 +96,8 @@ class MyNews():
     def compileBook(self):
         # We are compiling book here
         logging.info("Building epub")
-        epubFile = self.outputFolder + 'dailynews.epub'
-        mobiFile = self.outputFolder + 'dailynews.mobi'
+        epubFile = os.path.join(self.outputFolder,'dailynews.epub')
+        mobiFile = os.path.join(self.outputFolder,'dailynews.mobi')
 
         # TODO there is gotta be more elegant way to pass this variable 
         # we can move it to Docker
