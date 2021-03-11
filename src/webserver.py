@@ -62,5 +62,5 @@ class ServerThread(threading.Thread):
 
     def run(self):
         logging.info(f"Starting webserver {self.hostName} on port {self.serverPort}")
-        webServer = HTTPServer((self.hostName, int(self.serverPort)), ServerHandler)
+        webServer = HTTPServer(("", int(self.serverPort)), ServerHandler)
         webServer.serve_forever()
