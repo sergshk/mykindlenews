@@ -97,7 +97,7 @@ class MyNews():
         # We are compiling book here
         logging.info("Building epub")
         epubFile = os.path.join(self.outputFolder,'dailynews.epub')
-        mobiFile = os.path.join(self.outputFolder,'dailynews.mobi')
+        mobiFile = os.path.join(self.outputFolder,'dailynews_'+self.startTime.strftime('%Y_%m_%d')+'.mobi')
 
         # TODO there is gotta be more elegant way to pass this variable 
         # we can move it to Docker
