@@ -35,7 +35,7 @@ class MyNews():
     """
     templateSinglePost = u"""
         <article>
-            <h1>{title}</h1>
+            <h1>::: {title}</h1>
             <p><small>By {author} for <i>{blog}</i>, <b>on {postdate}</b>.</small></p>
              {body}
         </article>
@@ -75,27 +75,30 @@ class MyNews():
         logging.info("Getting news")
         self.newsPosts = self.getPosts()
 
-    def formatPost(self, post):
-        """
-        Method to format single post 
-        """
-        result = post._asdict()
-        # TODO move date format into config file
-        result['postdate'] = result['time'].strftime('%d %B %Y').strip('0')
-        return result
-
     def buildFile(self):
         # We are building HTML file
         logging.info("Generating HTML")
         self.newsHTML=""
         if self.newsPosts:
             self.newsHTML = self.templateHeader.format(today=self.startTime.strftime('%d %B %Y').strip('0'))
-            self.newsHTML += u"\n".join([self.templateSinglePost.format(**self.formatPost(singlePost)) for singlePost in self.newsPosts])
+            for singlePost in self.newsPosts:
+                postDict = singlePost._asdict()
+                if len(postDict['body']) > 300:
+                    postDict['postdate'] = postDict['time'].strftime('%d %B %Y').strip('0')
+                    self.newsHTML += u"\n"+self.templateSinglePost.format(**postDict)
+                else:
+                    logging.info("Discarding post"+postDict['title'])
             self.newsHTML += self.templateFooter
 
-    def compileBook(self):
+    def compileBook(self, debugMode=False):
         # We are compiling book here
         logging.info("Building epub")
+        if debugMode:
+            htmlFile = os.path.join(self.outputFolder,'dailynews_'+self.startTime.strftime('%Y_%m_%d')+'.html')
+            htmlHandler = open(htmlFile,"w")
+            htmlHandler.write(self.newsHTML)
+            htmlHandler.close()
+            return
         epubFile = os.path.join(self.outputFolder,'dailynews.epub')
         mobiFile = os.path.join(self.outputFolder,'dailynews_'+self.startTime.strftime('%Y_%m_%d')+'.mobi')
 

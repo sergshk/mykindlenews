@@ -4,6 +4,10 @@ import json
 import os.path
 import logging
 
+# Setting logging level prior to first use
+# TODOsee if there is a better place for that
+logging.basicConfig(level=logging.INFO)
+
 from configparser import ConfigParser
 from news import MyNews
 from webserver import ServerThread
@@ -28,7 +32,19 @@ else:
     configFile = os.path.join(configFolder, configFile)
     if not os.path.exists(configFile):
         logging.info(f"Config file not found {configFile}!")
-        exit(1)
+        if not os.path.exists(configFile+".sample"):
+            logging.info(f"Config file sample not found {configFile}!")
+            exit(1)
+        else:
+            logging.info(f"Found {configFile}! using sample")
+            # copy file from a cample, avoid using straight OS function
+            confSample = open(configFile+".sample","r")
+            confReal = open(configFile,"w")
+            for line in confSample:
+                confReal.write(line)
+            confSample.close()
+            confReal.close()
+
 
 # parse config file
 newsConfig = ConfigParser()
@@ -44,7 +60,7 @@ while True:
     newsService.precheck()
     newsService.getNews()
     newsService.buildFile()
-    newsService.compileBook()
+    newsService.compileBook(debugMode = osDEVENV)
     newsService.updatePullDate()
     newsConfig.set('news','newsLastPull',newsService.startTime.strftime("%Y-%m-%d %H:%M:%S.%f"))
     with open(configFile,"w") as handler:

@@ -3,6 +3,7 @@ import threading
 import feedparser
 import time
 from datetime import datetime, timedelta
+import pytz
 
 Post = collections.namedtuple('Post', [
     'time',
@@ -24,13 +25,18 @@ class FeedparserThread(threading.Thread):
         feed = feedparser.parse(self.feedUrl)
         feedPosts = []
         blog = feed['feed'].get('title','No Title')
+        sourceTZ = pytz.timezone('UTC')
+        destTZ = pytz.timezone('America/Chicago')
+        feedTime = self.feedStart.replace(tzinfo=destTZ).astimezone(destTZ)
         for entry in feed['entries']:
             postTime = entry.get('updated_parsed',0)
             if not postTime:
                 postTime = entry.get('published_parsed',0)
-            entryTime = datetime.fromtimestamp(time.mktime(postTime))
-            feedTime = self.feedStart
-            if entryTime > self.feedStart:
+            UTCTime = datetime.fromtimestamp(time.mktime(postTime))
+            # Converting TZ
+            UTCTime.replace(tzinfo=sourceTZ)
+            entryTime = UTCTime.astimezone(destTZ)
+            if entryTime > feedTime:
                 # pulling only fresh entries
                 post = self.parseEntry(entry, blog, entryTime)
                 if post:
