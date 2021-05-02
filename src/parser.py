@@ -32,9 +32,9 @@ class FeedparserThread(threading.Thread):
             postTime = entry.get('updated_parsed',0)
             if not postTime:
                 postTime = entry.get('published_parsed',0)
-            UTCTime = datetime.fromtimestamp(time.mktime(postTime))
+            UTCTime = pytz.utc.localize(datetime.fromtimestamp(time.mktime(postTime)))
             # Converting TZ
-            UTCTime.replace(tzinfo=sourceTZ)
+            #UTCTime.replace(tzinfo=sourceTZ)
             entryTime = UTCTime.astimezone(destTZ)
             if entryTime > feedTime:
                 # pulling only fresh entries
